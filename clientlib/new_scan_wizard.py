@@ -5,7 +5,7 @@
 # This program starts scanning of new Flic buttons that have not previously been verified by the server.
 # Once it finds a button that is in private mode, it shows a message that the user should hold it down for 7 seconds to make it public.
 # Once it finds a button that is in public mode, it attempts to connect to it.
-# If it could be successfully connected and verified, the bluetooth address is printed and the program exits.
+# If it could be successfully connected and verified, the bluetooth address is printed and the user is asked if they want to scan again for another button.
 # If it could not be verified within 30 seconds, the scan is restarted.
 
 import fliclib
@@ -18,7 +18,7 @@ def strtobool(val):
 
 def ask(question):
     while True:
-        print(question + " [y/n]")
+        print(question, end=" [y/n] ")
         answer = input().lower()    
         try:
             bAnswer = strtobool(answer)
@@ -31,11 +31,8 @@ def reset_client_and_scan():
     scan_for_button(client)
     
 def close_client():
-    if client is not None:
-        client.close()
-    else:
-        print("Exiting scan wizard")
-        sys.exit()
+    print("Exiting scan wizard...")
+    sys.exit()
 			
 def scan_for_button(client):
     wizard = fliclib.ScanWizard()
@@ -79,7 +76,7 @@ def on_completed(scan_wizard, result, bd_addr, name):
             close_client()
 
 def main():
-    print("Welcome to Scan Wizard. Please press a Flic button to connect it.")
+    print("\nWelcome to Scan Wizard. Please press a Flic button to connect it.")
     reset_client_and_scan()
 
 if __name__ == "__main__":

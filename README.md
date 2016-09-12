@@ -10,6 +10,7 @@
 
 ### First time setup and run:
 Execute `./setup.sh` and follow instructions.  
+Execute `./start.sh`.
 
 ### Restarting the client (buttons already setup):
 Execute `./start.sh`.
