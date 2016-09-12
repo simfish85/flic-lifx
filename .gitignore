@@ -2,3 +2,4 @@ clientlib/__pycache__
 bin/x86_64/flic.sqlite3
 bin/armv6l/flic.sqlite3
 bin/i386/flic.sqlite3
+.env

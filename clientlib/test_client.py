@@ -7,6 +7,7 @@
 # It also monitors when new buttons are verified and connects to them as well. For example, run this program and at the same time the new_scan_wizard.py program.
 
 import fliclib
+import lightservice
 
 client = fliclib.FlicClient("localhost")
 
@@ -39,6 +40,11 @@ def got_info(items):
         got_button(bd_addr)
 
 def main():
+    # Get light information
+    lifxService = lightservice.LightDataService()
+    lifxService.refresh_light_data()
+    
+    # Setup button listener
     print("\nClient is now listening for button events. Press a Flic button to test it out!")
     client.get_info(got_info)
     client.on_new_verified_button = got_button
