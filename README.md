@@ -1,13 +1,12 @@
 # LIFX & Flic Hub For Raspberry Pi
 
-## Quick start
 ### Packages
 - The standard C/C++ libraries, which should be installed by default on most Linux distributions.
 - Python 3+
 
 ### Running
 
-Execute `./setup.sh` and follow instructions.
+Execute `./setup.sh` and follow instructions.  
 Execute `./start.sh`.
 
 ## Feedback
