@@ -1,13 +1,17 @@
 # LIFX & Flic Hub For Raspberry Pi
 
-### Requirements
+## Requirements
 - Raspberry Pi (only tested on Raspberry Pi 3 Model B Board running raspbian)
 - The standard C/C++ libraries, which should be installed by default on raspbian
 - Python 3+
+- Has also been tested on Ubuntu 14.04 LTS 
 
-### Running
+## Running
 
+### First time setup and run:
 Execute `./setup.sh` and follow instructions.  
+
+### Restarting the client (buttons already setup):
 Execute `./start.sh`.
 
 ## Feedback
