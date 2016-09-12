@@ -1,7 +1,8 @@
 # LIFX & Flic Hub For Raspberry Pi
 
-### Packages
-- The standard C/C++ libraries, which should be installed by default on most Linux distributions.
+### Requirements
+- Raspberry Pi (only tested on Raspberry Pi 3 Model B Board running raspbian)
+- The standard C/C++ libraries, which should be installed by default on raspbian
 - Python 3+
 
 ### Running
