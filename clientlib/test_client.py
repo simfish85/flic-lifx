@@ -41,8 +41,8 @@ def got_info(items):
 
 def main():
     # Get light information
-    lifxService = lightservice.LightDataService()
-    lifxService.refresh_light_data()
+    lightService = lightservice.LIFXLightDataService("https://api.lifx.com/v1/")
+    data = lightService.refresh_light_data()
     
     # Setup button listener
     print("\nClient is now listening for button events. Press a Flic button to test it out!")

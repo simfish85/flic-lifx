@@ -46,5 +46,5 @@ do
 done
 
 # Start up light control client
-voltos use LIFXDev
+voltos use LIFXToken
 voltos run "python3 clientlib/test_client.py"
