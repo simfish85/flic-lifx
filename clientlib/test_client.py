@@ -31,13 +31,13 @@ def main():
     
     data = light_service.refresh_light_data(configMode)
     
-    # Start up the button listener only 
-    # if we aren't in config mode
+    button_handler = None
     if configMode:
-        sys.exit()
+        button_handler = buttonhandler.ConfigButtonHandler()
     else:
         button_handler = buttonhandler.ButtonHandler(data)
-        button_handler.start()
+    
+    button_handler.start()
 
 if __name__ == "__main__":
     main()
