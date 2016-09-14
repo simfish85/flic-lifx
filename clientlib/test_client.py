@@ -6,49 +6,38 @@
 # Once connected, it prints Down and Up when a button is pressed or released.
 # It also monitors when new buttons are verified and connects to them as well. For example, run this program and at the same time the new_scan_wizard.py program.
 
-import fliclib
 import lightservice
-
-client = fliclib.FlicClient("localhost")
-
-def on_connection_status_changed(channel, connection_status, disconnect_reason):
-    print(channel.bd_addr + " " + str(connection_status) + (" " + str(disconnect_reason) if connection_status == fliclib.ConnectionStatus.Disconnected else ""))
-    
-def on_button_up_or_down(channel, click_type, was_queued, time_diff):
-    print(channel.bd_addr + " " + str(click_type))
-    
-def on_button_click_or_hold(channel, click_type, was_queued, time_diff):
-    print(channel.bd_addr + " " + str(click_type))
-    
-def on_button_single_or_double_click(channel, click_type, was_queued, time_diff):
-    print(channel.bd_addr + " " + str(click_type))
-    
-def on_button_single_or_double_click_or_hold(channel, click_type, was_queued, time_diff):
-    print(channel.bd_addr + " " + str(click_type))  
-
-def got_button(bd_addr):
-    cc = fliclib.ButtonConnectionChannel(bd_addr)
-    # Only allowing status changes and all click type handlers
-    # Functions to print out information implemented above if we wish
-    # to user at a later time.
-    cc.on_connection_status_changed = on_connection_status_changed
-    cc.on_button_single_or_double_click_or_hold = on_button_single_or_double_click_or_hold
-    client.add_connection_channel(cc)
-
-def got_info(items):
-    for bd_addr in items["bd_addr_of_verified_buttons"]:
-        got_button(bd_addr)
+import buttonhandler
+import sys
+import argparse
 
 def main():
-    # Get light information
-    lightService = lightservice.LIFXLightDataService("https://api.lifx.com/v1/")
-    data = lightService.refresh_light_data()
+    # Parse arguments for configuration and light type
+    parser = argparse.ArgumentParser()
+    parser.add_argument("lightType", help="lifx or hue", choices=['lifx', 'hue'], type = str.lower)
+    parser.add_argument("-c", "--configMode", action='store_true', help="runs the client in config mode which prints out the light data")
     
-    # Setup button listener
-    print("\nClient is now listening for button events. Press a Flic button to test it out!")
-    client.get_info(got_info)
-    client.on_new_verified_button = got_button
-    client.handle_events()
+    args = parser.parse_args()
+        
+    configMode = args.configMode
+    lightType = args.lightType
+    
+    # Get light information 
+    # *Note*
+    # Only LIFX is supported at this point in time
+    light_service = None
+    if lightType == 'lifx':
+        light_service = lightservice.LIFXLightService("https://api.lifx.com/v1/")
+    
+    data = light_service.refresh_light_data(configMode)
+    
+    # Start up the button listener only 
+    # if we aren't in config mode
+    if configMode:
+        sys.exit()
+    else:
+        button_handler = buttonhandler.ButtonHandler(data)
+        button_handler.start()
 
 if __name__ == "__main__":
     main()

@@ -42,7 +42,7 @@ class LIFXLocation():
         Location Name: %s
         Lights:\n""" % (self.locationId, self.locationName) + stringformatter.lights_to_string(self.lights, False)
 
-class LIFXLightDataService():
+class LIFXLightService():
     # Params:
     # endpoint_base_url: Base url for LIFX Api
     def __init__(self, endpoint_base_url):
@@ -56,17 +56,18 @@ class LIFXLightDataService():
     #    'locations': {LocationData},
     #    'scenes': {SceneData}
     # }
-    def refresh_light_data(self):
+    def refresh_light_data(self, isConfigMode):
         light_info = self.get_light_data()
         lights = light_info['lights']
         groups = light_info['groups']
         locations = light_info['locations']
         scenes = self.get_scene_data()
         
-        print(stringformatter.lights_to_string(lights, True))
-        print(stringformatter.dict_to_string(groups, "GROUPS"))
-        print(stringformatter.dict_to_string(locations, "LOCATIONS"))
-        print(stringformatter.scenes_to_string(scenes))
+        if isConfigMode:
+            print(stringformatter.lights_to_string(lights, True))
+            print(stringformatter.dict_to_string(groups, "GROUPS"))
+            print(stringformatter.dict_to_string(locations, "LOCATIONS"))
+            print(stringformatter.scenes_to_string(scenes))
         
         return  { 
                     'lights': lights,
