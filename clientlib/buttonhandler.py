@@ -1,32 +1,6 @@
 import configparser, os, sys
 import fliclib
 
-def on_connection_status_changed(channel, connection_status, disconnect_reason):
-    print(channel.bd_addr + " " + str(connection_status) + (" " + str(disconnect_reason) if connection_status == fliclib.ConnectionStatus.Disconnected else ""))
-    
-def on_button_single_or_double_click_or_hold(channel, click_type, was_queued, time_diff):
-    # Execute the appropriate click function with the button address as the argument
-    if not was_queued:
-        click_functions[str(click_type)](channel.bd_addr)
-        
-def on_single_click(button_addr):
-    print("on single click " + button_addr)
-    pass
-    
-def on_double_click(button_addr):
-    print("on double click " + button_addr)
-    pass
-    
-def on_hold(button_addr):
-    print("on hold " + button_addr)
-    pass        
-        
-click_functions = {
-    'ClickType.ButtonSingleClick': on_single_click,
-    'ClickType.ButtonDoubleClick': on_double_click,
-    'ClickType.ButtonHold': on_hold
-}
-
 class ConfigButtonHandler():
     def __init__(self):
         self.client = fliclib.FlicClient("localhost")
@@ -60,11 +34,38 @@ class ButtonHandler():
     def __init__(self, lightData):
         self.client = fliclib.FlicClient("localhost")
         self.data = lightData
+        self.click_functions = {
+            'ClickType.ButtonSingleClick': self.on_single_click,
+            'ClickType.ButtonDoubleClick': self.on_double_click,
+            'ClickType.ButtonHold': self.on_hold
+        }
+        self.buttons_actions = {}
+    
+    def on_connection_status_changed(self, channel, connection_status, disconnect_reason):
+        pass
+        
+    def on_button_single_or_double_click_or_hold(self, channel, click_type, was_queued, time_diff):
+        # Execute the appropriate click function with the button address as the argument
+        if not was_queued:
+            self.click_functions[str(click_type)](channel.bd_addr)
+            
+    def on_single_click(self, button_addr):
+        print("on single click " + button_addr)
+        pass
+        
+    def on_double_click(self, button_addr):
+        print("on double click " + button_addr)
+        pass
+        
+    def on_hold(self, button_addr):
+        print("on hold " + button_addr)
+        pass        
+            
         
     def got_button(self, bd_addr):
         cc = fliclib.ButtonConnectionChannel(bd_addr)
-        cc.on_connection_status_changed = on_connection_status_changed
-        cc.on_button_single_or_double_click_or_hold = on_button_single_or_double_click_or_hold
+        cc.on_connection_status_changed = self.on_connection_status_changed
+        cc.on_button_single_or_double_click_or_hold = self.on_button_single_or_double_click_or_hold
         self.client.add_connection_channel(cc)
         
     def got_info(self, items):
@@ -75,8 +76,19 @@ class ButtonHandler():
         config = configparser.ConfigParser()
         if os.path.exists("button_actions.cfg"):
             configuration = config.read_file(open("button_actions.cfg"))
-            print("Found existing config file")
-            self.configured = True
+            config.read('example.ini')
+            config_sections = config.sections()
+            
+            if not len(config_sections):
+                print("No buttons declared in the config file...")
+                print("Please add some actions to the config file before running the client.")
+                sys.exit()
+            else:
+                #print("Buttons loaded from config:")
+                
+                #for button in config_sections:
+                #    print(button)
+            
         else:
             print("No existing config found for button actions")
             print("Please run  in config mode to view light data and create a config file")
@@ -92,15 +104,6 @@ class ButtonHandler():
         # Handle button events
         print("\nClient is now listening for button events. Press a Flic button to test it out!")
         self.client.handle_events()
-
-    
-# button_actions is a dictionary that maps button ids to light actions
-# e.g.
-# button_actions =
-# {
-#       button_id_1: ToggleLight,
-#       button_id_2: EnableScene
-# }
 
 
     

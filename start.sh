@@ -95,7 +95,7 @@ done
 voltos use LIFXToken
 
 if $config_mode_on; then
-    voltos run "python3 clientlib/test_client.py -c LIFX"
+    voltos run "python3 clientlib/client.py -c LIFX"
 else
-    voltos run "python3 clientlib/test_client.py LIFX"
+    voltos run "python3 clientlib/client.py LIFX"
 fi

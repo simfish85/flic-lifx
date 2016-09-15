@@ -2,6 +2,7 @@ import requests
 import os
 import json
 import stringformatter
+from enum import Enum
 
 token = os.environ['TOKEN']
 headers = {
@@ -9,6 +10,23 @@ headers = {
 }
 all_lights_suffix = "lights/all"
 scenes_suffix = "scenes"
+
+class Selector(Enum):
+	All = "all"
+	Label = "label:"
+    ID = "id:"
+    GroupID = "group_id:"
+    Group = "group:"
+    LocationID = "location_id:"
+    Location = "location:"
+    SceneID = "scene_id:"
+    
+class State(Enum):
+    Power = "power"
+    Color = "color"
+    Brightness = "brightness"
+    Duration = "duration"
+    
 
 class LIFXGroup():
     def __init__(self, groupId, groupName):
@@ -129,3 +147,13 @@ class LIFXLightService():
         response = requests.get(self.endpoint_base_url + scenes_suffix, headers=headers)
         scenes = json.loads(response.text)
         return scenes
+        
+    def toggle(self, Selector):
+        # TODO
+        pass
+       
+    def set_state(self, Selector):
+        # TODO
+        pass
+        
+    def set_states(self, states)
