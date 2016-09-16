@@ -8,12 +8,12 @@ token = os.environ['TOKEN']
 headers = {
     "Authorization": "Bearer %s" % token,
 }
-all_lights_suffix = "lights/all"
-scenes_suffix = "scenes"
 
 class Selector(Enum):
-	All = "all"
-	Label = "label:"
+    """Different selectors we can use for the LIFX Api.
+    """
+    All = "all"
+    Label = "label:"
     ID = "id:"
     GroupID = "group_id:"
     Group = "group:"
@@ -22,16 +22,20 @@ class Selector(Enum):
     SceneID = "scene_id:"
     
 class State(Enum):
+    """Different states we can set via the LIFX Api.
+    """
     Power = "power"
     Color = "color"
     Brightness = "brightness"
     Duration = "duration"
     
 
-class LIFXGroup():
-    def __init__(self, groupId, groupName):
-        self.groupId = groupId
-        self.groupName = groupName
+class LIFXGroup(object):
+    """Representation of a location for LIFX groups.
+    """
+    def __init__(self, group_id, group_name):
+        self.group_id = group_id
+        self.group_name = group_name
         self.lights = list()
         
     def add_light(self, light):
@@ -42,12 +46,15 @@ class LIFXGroup():
         LIFX Group:
         Group ID: %s
         Group Name: %s
-        Lights:\n""" % (self.groupId, self.groupName) + stringformatter.lights_to_string(self.lights, False)
+        Lights:\n""" % (self.group_id, self.group_name) + stringformatter.lights_to_string(self.lights, False)
         
-class LIFXLocation():
-    def __init__(self, locationId, locationName):
-        self.locationId = locationId
-        self.locationName = locationName
+class LIFXLocation(object):
+    """Representation of a location for LIFX lights.
+    """
+    
+    def __init__(self, location_id, location_name):
+        self.location_id = location_id
+        self.location_name = location_name
         self.lights = list()
         
     def add_light(self, light):
@@ -58,30 +65,50 @@ class LIFXLocation():
         LIFX Location: 
         Location ID: %s
         Location Name: %s
-        Lights:\n""" % (self.locationId, self.locationName) + stringformatter.lights_to_string(self.lights, False)
+        Lights:\n""" % (self.location_id, self.location_name) + stringformatter.lights_to_string(self.lights, False)
 
-class LIFXLightService():
-    # Params:
-    # endpoint_base_url: Base url for LIFX Api
+class LIFXLightService(object):
+    """Service to handle all LIFX Api requests.
+    
+    Attributes:
+        all_lights_suffix: url suffix to get all lights
+        scenes_suffix: url suffix to get scenes
+    """
+    
+    all_lights_suffix = "lights/all"
+    scenes_suffix = "scenes"
+    
     def __init__(self, endpoint_base_url):
+        """Initializes the LIFXLightService by setting the endpoint_base_url.
+        
+        Args:
+            endpoint_base_url: Base url for LIFX Api to base all requests off.
+        """
         self.endpoint_base_url = endpoint_base_url
         
-    # Returns a dictionary of Lights, Groups, Locations, and Scenes
-    # e.g.
-    # {
-    #    'lights': {LightData}, 
-    #    'groups': {GroupData},
-    #    'locations': {LocationData},
-    #    'scenes': {SceneData}
-    # }
-    def refresh_light_data(self, isConfigMode):
+    def refresh_light_data(self, is_config_mode):
+        """Gets all lights, groups, locations and scenes from the LIFX Api.
+        
+        Args:
+            is_config_mode: if True, will print all information to console to help with writing the config file.
+    
+        Returns:
+            A dictionary of Lights, Groups, Locations, and Scenes.
+            e.g.
+            {
+               'lights': {LightData},
+               'groups': {GroupData},
+               'locations': {LocationData},
+               'scenes': {SceneData}
+            }
+        """
         light_info = self.get_light_data()
         lights = light_info['lights']
         groups = light_info['groups']
         locations = light_info['locations']
         scenes = self.get_scene_data()
         
-        if isConfigMode:
+        if is_config_mode:
             print(stringformatter.lights_to_string(lights, True))
             print(stringformatter.dict_to_string(groups, "GROUPS"))
             print(stringformatter.dict_to_string(locations, "LOCATIONS"))
@@ -94,18 +121,23 @@ class LIFXLightService():
                     'scenes': scenes
                 }
         
-    # Returns a dictionary of Lights, Groups, and Locations
-    # e.g.
-    # {
-    #    'lights': {LightData},
-    #    'groups': {GroupData},
-    #    'locations': {Locations}
-    # }
-    # Lifx api doesn't give an easy way to get group
-    # information like it does for scenes so we need
-    # to get group information from light information
+    
     def get_light_data(self):
-        response = requests.get(self.endpoint_base_url + all_lights_suffix, headers=headers)
+        """Sends a request to the LIFX Api to get all light data.
+    
+        Returns:
+            A dictionary of Lights, Groups, and Locations.
+            e.g.
+            {
+               'lights': {LightData},
+               'groups': {GroupData},
+               'locations': {Locations}
+            }
+            Lifx api doesn't give an easy way to get group
+            information like it does for scenes so we need
+            to get group information from light information.
+        """
+        response = requests.get(self.endpoint_base_url + LIFXLightService.all_lights_suffix, headers=headers)
         lights = json.loads(response.text)
         
         # Init the groups and locations dictionaries
@@ -142,18 +174,30 @@ class LIFXLightService():
             
         return { 'lights': lights, 'groups': groups, 'locations': locations }
             
-    # Returns a list of Scenes
     def get_scene_data(self):
-        response = requests.get(self.endpoint_base_url + scenes_suffix, headers=headers)
+        """Sends a request to the LIFX Api to get all scenes.
+    
+        Returns:
+            A list of scenes.
+        """
+        response = requests.get(self.endpoint_base_url + LIFXLightService.scenes_suffix, headers=headers)
         scenes = json.loads(response.text)
         return scenes
         
     def toggle(self, Selector):
+        """Sends a request to the LIFX Api to toggle all matches for the selector.
+        """
         # TODO
         pass
        
     def set_state(self, Selector):
+        """Sends a request to the LIFX Api to set a state matching a selector.
+        """
         # TODO
         pass
         
-    def set_states(self, states)
+    def set_states(self, states):
+        """Sends a request to the LIFX Api to set multiple states matching selectors.
+        """
+        # TODO
+        pass
