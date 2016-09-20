@@ -1,6 +1,6 @@
 #!/bin/bash
 
-###############################################################################################
+################################################################################
 #
 # This script is just an easy way to start the server and client in one command
 #
@@ -13,7 +13,7 @@
 #           will exit.. you'll have to start it up again and be faster next time ;)
 # 6. Start up client process with LIFX light type - Hue support to come later
 #
-###############################################################################################
+################################################################################
 
 print_help() {
 cat << EOF

@@ -7,28 +7,7 @@ from enum import Enum
 token = os.environ['TOKEN']
 headers = {
     "Authorization": "Bearer %s" % token,
-}
-
-class Selector(Enum):
-    """Different selectors we can use for the LIFX Api.
-    """
-    All = "all"
-    Label = "label:"
-    ID = "id:"
-    GroupID = "group_id:"
-    Group = "group:"
-    LocationID = "location_id:"
-    Location = "location:"
-    SceneID = "scene_id:"
-    
-class State(Enum):
-    """Different states we can set via the LIFX Api.
-    """
-    Power = "power"
-    Color = "color"
-    Brightness = "brightness"
-    Duration = "duration"
-    
+}    
 
 class LIFXGroup(object):
     """Representation of a location for LIFX groups.
