@@ -152,7 +152,8 @@ class ButtonHandler(object):
         """Loads the button config from the config file. Essentially maps button click types to light actions.
         """
         config = config_file_parser.ConfigFileParser()
-        config.get_config()
+        config_data = config.get_config()
+        print(config_data)
         
     def start(self):
         """Loads the button config, initializes the ButtonConnectionChannels, and starts listening for button events.

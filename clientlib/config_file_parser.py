@@ -103,10 +103,73 @@ class ConfigFileParser(object):
             return None
         else:
             return match.group()
+            
+    def _get_action_info(self, action, section):
+        """Function to populate an action object from the config file section
+        """
+        action_dict = self.config[section]
+        for key in action_dict:
+            cameled_key = key.title().replace(" ", "")
+            if cameled_key in ActionType.__members__:
+                action.action_type = cameled_key
+                if cameled_key == 'SetState':
+                    # Store state in action object
+                    action.state = self.config[section][key]
+                elif cameled_key == 'SetStates':
+                    # Store states in list in action object
+                    action.states = self.config[section][key].split(",")
+                elif cameled_key == 'Toggle' or cameled_key == 'Breathe' or cameled_key == 'Pulse' or cameled_key == 'Cycle':
+                    action.selector = self.config[section][key]
+            elif cameled_key == 'Selector':
+                    action.selector = self.config[section][key]
+            elif cameled_key == 'Duration':
+                # Store duration in action object
+                action.duration = self.config[section][key]
+                
+        return action         
+        
+    def _get_button_info(self, button, section):
+        """Function to populate a button object from the config file section
+        """
+        for key in self.config[section]:
+            if key == 'singleclick':
+                button.single_click_action = self.config[section][key]
+            elif key == 'doubleclick':
+                button.double_click_action = self.config[section][key]  
+            elif key == 'hold':
+                button.hold_action = self.config[section][key]
+        return button
+        
+    def _get_state_info(self, state, section):
+        """Function to populate a state object from the config file section
+        """
+        for key in self.config[section]:
+            if key == 'power':
+                state.power = self.config[section][key]
+            elif key == 'color':
+                state.color = self.config[section][key]
+            elif key == 'brightness':
+                state.brightness = self.config[section][key]   
+            elif key == 'duration':
+                state.duration = self.config[section][key]
+        return state       
         
     def get_config(self):
         """Function to get the configuration from the config file.
+        
+        Returns:
+            A dictionary of actions, buttons and states.
+            e.g.
+            { 
+                'actions': {ActionData},
+                'buttons': {ButtonData},
+                'states' : {StateData}
+            }
         """
+        
+        actions = {}
+        buttons = {}
+        states = {}
         
         if os.path.exists(ConfigFileParser.config_file_name):
             self.config.read_file(open(ConfigFileParser.config_file_name))
@@ -122,21 +185,25 @@ class ConfigFileParser(object):
                     if section_type == "ACTION":
                         action_name = self._get_section_name(section, section_type)
                         action = Action(action_name)
-                        print("Action name: %s" % action.action_name)
+                        action = self._get_action_info(action, section)
+                        actions[action.action_name] = action
                         
                     elif section_type == "BUTTON":
                         button_address = self._get_section_name(section, section_type)
                         button = Button(button_address)
-                        print("Button address: %s" % button.button_address)
+                        button = self._get_button_info(button, section)
+                        buttons[button.button_address] = button
                         
                     elif section_type == "STATE":
                         state_name = self._get_section_name(section, section_type)
                         state = State(state_name)
-                        print("State name: %s" % state.state_name)
+                        state = self._get_state_info(state, section)
+                        states[state.state_name] = State
                         
                     else:
                         print("%s not a valid section type, skipping." % section_type)
                         continue
+            return { 'actions': actions, 'buttons': buttons, 'states': states}
             
         else:
             print("No existing config found for button actions")
