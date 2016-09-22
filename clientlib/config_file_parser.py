@@ -42,6 +42,12 @@ class Action(object):
         """Inits the action name for the Action.
         """
         self.action_name = action_name
+        self.action_type = None
+        self.selector = None
+        self.duration = None
+        self.state = None
+        self.states = None
+        self.uuid = None
 
 class Button(object):
     """Representation of a button which has 3 button click types: single click, double click, and hold with actions for each event.
@@ -118,8 +124,13 @@ class ConfigFileParser(object):
                 elif cameled_key == 'SetStates':
                     # Store states in list in action object
                     action.states = self.config[section][key].split(",")
-                elif cameled_key == 'Toggle' or cameled_key == 'Breathe' or cameled_key == 'Pulse' or cameled_key == 'Cycle':
+                elif (cameled_key == 'Toggle') \
+                  or (cameled_key == 'Breathe') \
+                  or (cameled_key == 'Pulse') \
+                  or (cameled_key == 'Cycle'):
                     action.selector = self.config[section][key]
+                elif (cameled_key == 'ActivateScene'):
+                    action.uuid = self.config[section][key]
             elif cameled_key == 'Selector':
                     action.selector = self.config[section][key]
             elif cameled_key == 'Duration':

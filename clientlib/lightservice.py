@@ -163,20 +163,31 @@ class LIFXLightService(object):
         scenes = json.loads(response.text)
         return scenes
         
-    def toggle(self, Selector):
+    def toggle(self, selector, duration):
         """Sends a request to the LIFX Api to toggle all matches for the selector.
         """
-        # TODO
-        pass
+        if duration is None:
+            response = requests.post(self.endpoint_base_url + "/lights/" + selector + "/toggle", headers=headers)
+        else:
+            response = requests.post(self.endpoint_base_url + "/lights/" + selector + "/toggle", headers=headers, data={'duration': duration})
+        
        
-    def set_state(self, Selector):
+    def set_state(self, toggle_action):
         """Sends a request to the LIFX Api to set a state matching a selector.
         """
         # TODO
         pass
         
-    def set_states(self, states):
+    def set_states(self, set_states_action):
         """Sends a request to the LIFX Api to set multiple states matching selectors.
         """
         # TODO
         pass
+        
+    def activate_scene(self, uuid, duration):
+        """Sends a request to the LIFX Api to activate the scene identified by the uuid. Optional duration to activate over time.
+        """
+        if duration is None:
+            response = requests.put(self.endpoint_base_url + 'scenes/scene_id:%s/activate' % uuid, headers=headers)
+        else:
+            response = requests.put(self.endpoint_base_url + 'scenes/scene_id:%s/activate' % uuid, headers=headers, data={'duration': duration})

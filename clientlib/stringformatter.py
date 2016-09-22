@@ -31,7 +31,7 @@ def scenes_to_string(scenes):
     finalString += "\n-------------------------------------------\n"
     
     for scene in scenes:
-        finalString += "Scene ID: %s, Scene Name: %s\n" % (scene["uuid"], scene["name"])
+        finalString += "Scene UUID: %s, Scene Name: %s\n" % (scene["uuid"], scene["name"])
         
     return finalString
     

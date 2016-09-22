@@ -79,7 +79,11 @@ class ButtonHandler(object):
             'ClickType.ButtonDoubleClick': self.on_double_click,
             'ClickType.ButtonHold': self.on_hold
         }
-        self.buttons_actions = {}
+        self.buttons = {}
+        self.actions = {}
+        self.states = {}
+        
+        self.light_service = None
     
     def on_connection_status_changed(self, channel, connection_status, disconnect_reason):
         """Function that is called whenever a buttons connection status is changed.
@@ -110,7 +114,13 @@ class ButtonHandler(object):
         Args:
             button_addr: address of the button that was clicked.
         """
-        print("on single click " + button_addr)
+        print("button single click")
+        button_action_name = self.buttons[button_addr].single_click_action
+        button_action = self.actions[button_action_name]
+        if button_action.action_type == 'Toggle':
+            self.light_service.toggle(button_action.selector, button_action.duration)
+        elif button_action.action_type == 'ActivateScene':
+            self.light_service.activate_scene(button_action.uuid, button_action.duration)
         
     def on_double_click(self, button_addr):
         """Function to handle double clicks for a certain button.
@@ -118,7 +128,13 @@ class ButtonHandler(object):
         Args:
             button_addr: address of the button that was clicked.
         """
-        print("on double click " + button_addr)
+        print("button double click")
+        button_action_name = self.buttons[button_addr].double_click_action
+        button_action = self.actions[button_action_name]
+        if button_action.action_type == 'Toggle':
+            self.light_service.toggle(button_action.selector, button_action.duration)
+        elif button_action.action_type == 'ActivateScene':
+            self.light_service.activate_scene(button_action.uuid, button_action.duration)
         
     def on_hold(self, button_addr):
         """Function to handle a button hold for a certain button.
@@ -126,7 +142,13 @@ class ButtonHandler(object):
         Args:
             button_addr: address of the button that was clicked.
         """
-        print("on hold " + button_addr)
+        print("button hold")
+        button_action_name = self.buttons[button_addr].hold_action
+        button_action = self.actions[button_action_name]
+        if button_action.action_type == 'Toggle':
+            self.light_service.toggle(button_action.selector, button_action.duration)
+        elif button_action.action_type == 'ActivateScene':
+            self.light_service.activate_scene(button_action.uuid, button_action.duration)
             
     def got_button(self, bd_addr):
         """Creates a button connection channel and assigns the handler function for button presses for a particular button.
@@ -148,17 +170,21 @@ class ButtonHandler(object):
         for bd_addr in items["bd_addr_of_verified_buttons"]:
             self.got_button(bd_addr)
     
-    def load_config(self):
+    def _load_config(self):
         """Loads the button config from the config file. Essentially maps button click types to light actions.
         """
         config = config_file_parser.ConfigFileParser()
         config_data = config.get_config()
         print(config_data)
+        self.buttons = config_data['buttons']
+        self.actions = config_data['actions']
+        self.states = config_data['states']
         
-    def start(self):
+    def start(self, light_service):
         """Loads the button config, initializes the ButtonConnectionChannels, and starts listening for button events.
         """
-        self.load_config()
+        self._load_config()
+        self.light_service = light_service
             
         # Get button information
         self.client.get_info(self.got_info)

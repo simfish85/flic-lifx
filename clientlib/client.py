@@ -30,10 +30,12 @@ def main():
     button_handler = None
     if config_mode:
         button_handler = buttonhandler.ConfigButtonHandler()
+        button_handler.start()
     else:
         button_handler = buttonhandler.ButtonHandler(data)
+        button_handler.start(light_service)
     
-    button_handler.start()
+    
 
 if __name__ == "__main__":
     main()
