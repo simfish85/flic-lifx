@@ -69,6 +69,11 @@ class State(object):
         """Sets the state_name for the State.
         """
         self.state_name = state_name
+        self.power = None
+        self.color = None
+        self.duration = None
+        self.brightness = None
+        self.selector = None
         
 
 class ConfigFileParser(object):
@@ -123,7 +128,7 @@ class ConfigFileParser(object):
                     action.state = self.config[section][key]
                 elif cameled_key == 'SetStates':
                     # Store states in list in action object
-                    action.states = self.config[section][key].split(",")
+                    action.states = [x.strip() for x in self.config[section][key].split(',')]
                 elif (cameled_key == 'Toggle') \
                   or (cameled_key == 'Breathe') \
                   or (cameled_key == 'Pulse') \
@@ -136,6 +141,8 @@ class ConfigFileParser(object):
             elif cameled_key == 'Duration':
                 # Store duration in action object
                 action.duration = self.config[section][key]
+            elif cameled_key == 'Default':
+                action.default = self.config[section][key]
                 
         return action         
         
@@ -163,6 +170,8 @@ class ConfigFileParser(object):
                 state.brightness = self.config[section][key]   
             elif key == 'duration':
                 state.duration = self.config[section][key]
+            elif key == 'selector':
+                state.selector = self.config[section][key]
         return state       
         
     def get_config(self):
@@ -209,7 +218,7 @@ class ConfigFileParser(object):
                         state_name = self._get_section_name(section, section_type)
                         state = State(state_name)
                         state = self._get_state_info(state, section)
-                        states[state.state_name] = State
+                        states[state.state_name] = state
                         
                     else:
                         print("%s not a valid section type, skipping." % section_type)

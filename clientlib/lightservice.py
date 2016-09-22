@@ -172,17 +172,51 @@ class LIFXLightService(object):
             response = requests.post(self.endpoint_base_url + "/lights/" + selector + "/toggle", headers=headers, data={'duration': duration})
         
        
-    def set_state(self, toggle_action):
+    def set_state(self, state, selector):
         """Sends a request to the LIFX Api to set a state matching a selector.
         """
-        # TODO
-        pass
+        body = {}
+        if state.power is not None:
+            body['power'] = state.power
+        if state.color is not None:
+            body['color'] = state.color
+        if state.brightness is not None:
+            body['brightness'] = state.brightness
+        if state.duration is not None:
+            body['duration'] = state.duration
+        response = requests.put(self.endpoint_base_url + '/lights/' + selector + '/state', data=body, headers=headers)
         
-    def set_states(self, set_states_action):
+    def set_states(self, states, default):
         """Sends a request to the LIFX Api to set multiple states matching selectors.
         """
-        # TODO
-        pass
+        states_to_send = []
+        for state in states:
+            state_to_send = {}
+            if state.power is not None:
+                state_to_send['power'] = state.power
+            if state.color is not None:
+                state_to_send['color'] = state.color
+            if state.brightness is not None:
+                state_to_send['brightness'] = state.brightness
+            if state.duration is not None:
+                state_to_send['duration'] = state.duration
+            if state.selector is not None:
+                state_to_send['selector'] = state.selector
+            states_to_send.append(state_to_send)
+        
+        defaults = {}
+        if default is not None:
+            if default.power is not None:
+                defaults['power'] = default.power
+            if default.color is not None:
+                defaults['color'] = default.color
+            if default.brightness is not None:
+                defaults['brightness'] = default.brightness
+            if default.duration is not None:
+                defaults['duration'] = default.duration
+        body = { "states": states_to_send, "defaults": defaults}
+        response = requests.put(self.endpoint_base_url + 'lights/states', data=json.dumps(body), headers=headers)
+        
         
     def activate_scene(self, uuid, duration):
         """Sends a request to the LIFX Api to activate the scene identified by the uuid. Optional duration to activate over time.
