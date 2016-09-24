@@ -42,7 +42,7 @@ class ConfigButtonHandler(object):
             items: information retrieved from the server. We only care about the button addresses of verified buttons.
         """
         for bd_addr in items["bd_addr_of_verified_buttons"]:
-            self.got_button(bd_addr)
+            self._got_button(bd_addr)
         
     def start(self):     
         """Initializes the ButtonConnectionChannels and starts listening for button events.

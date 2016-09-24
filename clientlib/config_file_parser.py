@@ -2,6 +2,7 @@ import configparser
 import os
 import re
 from enum import Enum
+import sys
 
 class Selector(Enum):
     """Different selectors we can use for the LIFX Api.
