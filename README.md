@@ -4,7 +4,7 @@ Tested on Raspbian for Raspberry Pi and on a laptop running Ubuntu 14.04
 ## Requirements
 - The standard C/C++ libraries, which should be installed by default on raspbian
 - Python 3+
-- [Voltos](http://voltos.io) account (put voltos in your PATH to use the start script with ease)
+- [Voltos](http://voltos.io) installed and a Voltos account (put voltos in your PATH to use the start script with ease)
 
 ## Running
 
