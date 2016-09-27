@@ -21,6 +21,9 @@ Tested on Raspbian for Raspberry Pi and on a laptop running Ubuntu 14.04
 ### Restarting the client (buttons already setup):
 Execute `./start.sh`.
 
+### Running in config mode:
+Execute `./start.sh -c`. This will print out info from your LIFX account such as scene IDs, light info, group info, etc. This is needed for writing a config file.
+
 ## Wiki
 Check out the [wiki](https://github.com/jennafin/flic-lifx/wiki) for troubleshooting and config file tips.
 
