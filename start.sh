@@ -45,7 +45,7 @@ done
 
 # Kill any running server processes
 if ps aux | grep '[f]licd' &> /dev/null; then
-    sudo kill $(ps aux | grep '[f]licd' | awk '{print $2}'); 
+    sudo kill $(ps aux | grep '[f]licd' | awk '{print $2}');
 fi
 
 # Kill any running client processes
@@ -89,8 +89,8 @@ do
 done
 
 # Start up light control client using voltos LIFXToken bundle.
-# Make sure you have set TOKEN in your voltos bundle to 
-# your LIFX cloud token from cloud.lifx.com. 
+# Make sure you have set TOKEN in your voltos bundle to
+# your LIFX cloud token from cloud.lifx.com.
 # Instructions for using voltos found at voltos.io
 voltos use LIFXToken
 
